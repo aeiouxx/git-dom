@@ -37,3 +37,12 @@ fn meg_init() -> Result<(), Error> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn test_fail() {
+        assert!(false);
+    }
+}
