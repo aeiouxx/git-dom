@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+  
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+   linting:
+     name: fmt + clippy
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout sources
+         uses: actions/checkout@v4
+         
+       - name: Check for typos
+         uses: crate-ci/typos@master
+         
+       - name: Install toolchain
+         uses: actions-rs/toolchain@v1
+         with:
+           profile: minimal
+           toolchain: stable
+           components: rustfmt, clippy
+           
+       - name: Build sources
+         uses: actions-rs/cargo@v1
+         with:
+           command: build
+           
+       - name: Run fmt
+         uses: actions-rs/cargo@v1
+         with:
+           command: fmt
+
+       - name: Run clippy
+         uses: actions-rs/cargo@v1
+         with:
+           command: clippy
+           args: -- -A warnings
+
+       - name: Run clippy (tests)
+         uses: actions-rs/cargo@v1
+         with:
+           command: clippy
+           args: --tests -- -A warnings
+
+       - name: Run tests
+         uses: actions-rs/cargo@v1
+         with:
+           command: test
+            
